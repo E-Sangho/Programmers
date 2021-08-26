@@ -1,13 +1,13 @@
 #include <string>
 #include <vector>
-#include <map>
+#include <unordered_set>
 using namespace std;
 
 bool visited[7]={0,};
 char num[7];
 int M;
 string temp = "";
-map<int, int> mp;
+unordered_set<int> uo_set;
 
 bool is_prime(int p) {
     if(p < 2) return false;
@@ -16,7 +16,6 @@ bool is_prime(int p) {
     }
     return true;
 }
-
 void dfs(int height) {
     if(height == M) return;
     
@@ -24,7 +23,7 @@ void dfs(int height) {
         if(!visited[i]) {
             visited[i] = true;
             temp += num[i];
-            ++mp[stoi(temp)];
+            uo_set.insert(stoi(temp));
             dfs(height+1);
             temp = temp.substr(0, height);
             visited[i] = false;
@@ -39,9 +38,9 @@ int solution(string numbers) {
         num[i] = numbers[i];
     }
     dfs(0);
-    map<int, int>::iterator iter;
-    for(iter = mp.begin(); iter != mp.end(); ++iter) {
-        if(is_prime(iter->first)) ++answer;
+    
+    for(auto i : uo_set) {
+        if(is_prime(i)) ++answer;
     }
     return answer;
 }
