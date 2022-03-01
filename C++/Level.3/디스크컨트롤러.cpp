@@ -31,28 +31,32 @@ using namespace std;
  * 
  */
 
+struct compare{
+    bool operator() (vector<int> a, vector<int> b) {
+   		return a[1] > b[1]; 
+    }
+};
+
 int solution(vector<vector<int>> jobs) {
     int answer = 0;
-    int p_time = 0;
-    int i = 0;
-    priority_queue<pair<int, int>> pq;
+    int time = 0;
+    int index = 0;
+    int n = jobs.size();
     sort(jobs.begin(), jobs.end());
-    while(i < jobs.size() || !pq.empty()) {
-        if(i < jobs.size() && p_time >= jobs[i][0]) {
-            pq.push({-jobs[i][1], -jobs[i][0]});
-            ++i;
-            continue;
-        }
-        if(!pq.empty()) {
-            pair<int, int> present = pq.top();
-            pq.pop();
-            p_time = p_time - present.first;
-            answer = answer + p_time + present.second;
-        }
-        else {
-            p_time = jobs[i][0];
+    priority_queue<vector<int>, vector<vector<int>>, compare> waiting_list;
+    while (index < n || !waiting_list.empty()) {
+        if (waiting_list.empty()) {
+            time = jobs[index][0];
+            waiting_list.push(jobs[index++]); 
+        } 
+        answer += waiting_list.top()[1] + (time - waiting_list.top()[0]);
+        time += waiting_list.top()[1];
+        waiting_list.pop();
+        while (index < n && jobs[index][0] <= time) {
+           	waiting_list.push(jobs[index++]);
         }
     }
-    answer /= jobs.size();
+   
+   	answer /= n;  
     return answer;
 }

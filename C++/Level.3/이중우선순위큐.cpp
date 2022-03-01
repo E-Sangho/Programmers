@@ -1,48 +1,42 @@
 #include <string>
 #include <vector>
 #include <queue>
-using namespace std;
 
-struct cmp{
-    bool operator() (int a, int b) {
-        return a > b;
-    }
-};
+using namespace std;
 
 vector<int> solution(vector<string> operations) {
     vector<int> answer;
-    priority_queue<int, vector<int>, cmp> pq_min;
     priority_queue<int> pq_max;
-    int cnt = 0;
-    for(auto op : operations) {
-        if(op[0] == 'I') {
-            pq_min.push(stoi(op.substr(2)));
-            pq_max.push(stoi(op.substr(2)));
-            ++cnt;
-        }
-        else {
-            if(cnt == 0) continue;
-            if(op[2] == '1') {
-                pq_max.pop();
-                --cnt;
+    priority_queue<int, vector<int>, greater<int>> pq_min;
+    int num = 0;
+    int n = operations.size();
+    for (int i = 0; i < n; ++i) {
+        if (operations[i][0] == 'I') {
+            int number = stoi(operations[i].substr(2));
+         	pq_max.push(number);
+            pq_min.push(number);
+            ++num;
+        } else if (operations[i][0] == 'D') {
+            if(num != 0) {
+                if (operations[i].substr(2) == "1") {
+                    pq_max.pop(); 
+                } else {
+                    pq_min.pop();
+                }
+                --num;
             }
-            if(op[2] == '-') {
-                pq_min.pop();
-                --cnt;
+        	if (num == 0) {
+                pq_max = priority_queue<int>();
+                pq_min = priority_queue<int, vector<int>, greater<int>>();
             }
-        }
-        if(cnt == 0) {
-            while(!pq_min.empty()) pq_min.pop();
-            while(!pq_max.empty()) pq_max.pop();
         }
     }
-    if(cnt == 0) {
-        answer.push_back(0);
-        answer.push_back(0);
-    }
-    else {
+	if (num != 0) {
         answer.push_back(pq_max.top());
         answer.push_back(pq_min.top());
+    } else {
+        answer.push_back(0);
+        answer.push_back(0);
     }
     return answer;
 }
