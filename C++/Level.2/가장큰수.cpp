@@ -4,24 +4,18 @@
 
 using namespace std;
 
-bool compare(string s1, string s2)
-{
-    if(s1 + s2 > s2 + s1) return true;
-    else return false;
+bool compare (int a, int b) {
+	string a_s = to_string(a), b_s = to_string(b);
+    return stoi(a_s + b_s) > stoi(b_s + a_s);
 }
 
 string solution(vector<int> numbers) {
     string answer = "";
-    vector<string> box;
-    for(int i = 0; i < numbers.size(); ++i)
-    {
-        box.push_back(to_string(numbers[i]));
+    sort (numbers.begin(), numbers.end(), compare);
+    int n = numbers.size();
+    for (int i = 0; i < n; ++i) {
+       	answer += to_string(numbers[i]); 
     }
-    sort(box.begin(), box.end(), compare);  
-    for(int i = 0; i < box.size(); ++i)
-    {
-        answer += box[i];
-    }
-    if(answer[0] == '0') answer = "0";
+    if (answer[0] == '0') answer = "0";
     return answer;
 }
