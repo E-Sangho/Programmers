@@ -3,26 +3,38 @@
 
 using namespace std;
 
-bool visited[200] = {0,};
+int N;
+int cnt;
+vector<int> visited;
+vector<vector<int>> network;
 
-void DFS(int root, vector<vector<int>> computers, int n) {
-    if(!visited[root]) {
-        visited[root] = true;
-        for(int i = 0; i < n; ++i) {
-            if(!visited[i] && computers[root][i]) {
-                DFS(i, computers, n);   
-            }
-        }   
+void DFSUtil(int index) {
+    if (visited[index]) {
+        return;
+    }
+    visited[index] = 1;
+    for (int i = 0; i < N; ++i) {
+        if (network[index][i] == 1) {
+            DFSUtil(i);
+        }
     }
 }
 
-int solution(int n, vector<vector<int>> computers) {
-    int answer = 0;
-    for(int i = 0; i < n; ++i) {
-        if(!visited[i]) {
-            DFS(i, computers, n);
-            ++answer;
+int DFS(int n, vector<vector<int>> computers) {
+    N = n;
+	cnt = 0;
+    network = computers;
+    visited.assign(N, 0);
+    
+    for (int i = 0; i < N; ++i) {
+        if (!visited[i]) {
+            ++cnt;
+            DFSUtil(i);
         }
     }
-    return answer;
+    return cnt;
+}
+
+int solution(int n, vector<vector<int>> computers) {
+    return DFS(n, computers);
 }

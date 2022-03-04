@@ -1,39 +1,60 @@
 #include <string>
 #include <vector>
+#include <queue>
+#include <unordered_map>
 
 using namespace std;
 
-int ans = 100;
-bool visited[51];
+string s_word;
+string t_word;
+int n;
+vector<string> lists;
+unordered_map<string, bool> visited;
 
-bool string_differ(string &s1, string &s2) {
-    int cnt = 0, s_len = s1.length();
-    for(int i = 0; i < s_len; ++i) {
-        if(s1[i] != s2[i]) ++cnt;
-    }
-    if(cnt == 1) return true;
-    else return false;
-}
-
-void DFS(int height, string begin, string target, vector<string> words) {
-    if(begin == target) {
-        ans = min(ans, height);
-        return;
-    }
-    if(height == words.size()) return;
-    
-    for(int i = 0; i < words.size(); ++i) {
-        if(string_differ(begin, words[i]) && !visited[i] && height < ans) {
-            visited[i] = true;
-            DFS(height + 1, words[i], target, words);
-            visited[i] = false;
+bool areTheyDifferOne(string &a, string &b) {
+	int string_len = a.length();
+    int cnt = 0;
+    for(int i = 0; i < string_len; ++i) {
+        if (a[i] != b[i]) {
+            ++cnt;
         }
     }
+    if (cnt != 1) {
+        return false;
+    }
+    return true;
+}
+
+int BFSUtil(string s_word) {
+	queue<pair<string, int>> q;
+    q.push({s_word, 0});
+    while (!q.empty()) {
+      	pair<string, int> tmp = q.front();
+        if (tmp.first == t_word) {
+            return tmp.second;
+        }
+        visited[tmp.first] = 1;
+        q.pop();
+        for(int i = 0; i < n; ++i) {
+            if (
+                !visited[lists[i]] &&
+                areTheyDifferOne(lists[i], tmp.first) 
+               ) {
+                q.push({lists[i], tmp.second + 1});
+            }
+        } 
+    }
+    return 0;
+}
+
+int BFS(string begin, string target, vector<string> words) {
+   	s_word = begin;
+    t_word = target;
+    lists = words;
+    n = words.size();
+    return BFSUtil(begin);
 }
 
 int solution(string begin, string target, vector<string> words) {
-    int n = words.size();
-    DFS(0, begin, target, words);
-    if(ans == 100) return 0;
-    else return ans;
+	return BFS(begin, target, words);
 }

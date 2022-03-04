@@ -2,27 +2,28 @@
 #include <vector>
 
 using namespace std;
-int cnt = 0;
-int sum = 0;
 
-void DFS(vector<int> numbers, int target, int depth)
-{
-    if(depth == numbers.size()) {
-        if(sum == target) {
-            ++cnt;
+int n;
+int cnt;
+
+void DFSUtil(int depth, int sum, vector<int> numbers, int target) {
+    if (depth == n) {
+        if (sum == target) {
+            ++cnt; 
         }
-        return;
+        return; 
     }
-    sum += numbers[depth];
-    DFS(numbers, target, depth+1);
-    sum -= 2 * numbers[depth];
-    DFS(numbers, target, depth+1);
-    sum += numbers[depth];
+    DFSUtil(depth + 1, sum + numbers[depth], numbers, target);
+    DFSUtil(depth + 1, sum - numbers[depth], numbers, target);
+}
+
+void DFS(vector<int> numbers, int target) {
+    n = numbers.size();
+    cnt = 0;
+    DFSUtil(0, 0, numbers, target);
 }
 
 int solution(vector<int> numbers, int target) {
-    int answer = 0;
-    DFS(numbers, target, 0);
-    answer = cnt;
-    return answer;
+    DFS(numbers, target);
+    return cnt;
 }
