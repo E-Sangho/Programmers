@@ -1,42 +1,54 @@
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 
-int N;
+unordered_map<string, vector<string>> next_pos;
+unordered_map<string, int> ticket_num;
+int n;
+string chosen_path = "a";
 
-bool compare(vector<string> s1, vector<string> s2) {
-    if(s1[0] == s2[0]) return s1[1] < s2[1];
-    else return s1[0] < s2[0];
+bool compare(vector<string> a, vector<string> b) {
+    if (a[0] == b[0]) return a[1] < b[1];
+    return a[0] < b[0];
 }
 
-void dfs(int height, string start, bool *visited, vector<vector<string>> tickets, vector<string> &answer) {
-    if(height == N) {
-        return;
-    }
-    
-    for(int i = 0; i < N; ++i) {
-        if(!visited[i] && tickets[i][0] == start) {
-            visited[i] = true;
-            string destination = tickets[i][1];
-            answer.push_back(destination);
-            dfs(height+1, destination, visited, tickets, answer);
-            if(answer.size() == N + 1) return;
-            answer.pop_back();
-            visited[i] = false;
+void DFSUtil(string airport, int depth, string path) {
+	if (depth == n) {
+        if (path < chosen_path) {
+            chosen_path = path;
+            return;
+        }
+    }    
+    for(auto next : next_pos[airport]) {
+        string ticket = airport + next;
+        if (ticket_num[ticket]) {
+            --ticket_num[ticket];
+           	DFSUtil(next, depth + 1, path + next); 
+            ++ticket_num[ticket];
         }
     }
 }
 
-vector<string> solution(vector<vector<string>> tickets) {
+vector<string> DFS(vector<vector<string>> tickets) {
+    sort(tickets.begin(), tickets.end(), compare);
+	for(auto ticket : tickets) {
+        next_pos[ticket[0]].push_back(ticket[1]);
+        ++ticket_num[ticket[0] + ticket[1]];
+    }
+    n = tickets.size();
+    DFSUtil("ICN", 0, "ICN");
     vector<string> answer;
-    N = tickets.size();
-    string start = "ICN";
-    sort(tickets.begin(), tickets.end(), compare);    
-    bool visited[N];
-    fill(visited, visited + N, false);
-    answer.push_back(start);
-    dfs(0, start, visited, tickets, answer);
+    int path_len = chosen_path.length();
+    for(int i = 0; i < path_len; i += 3) {
+        answer.push_back(chosen_path.substr(i, 3));
+    }
     return answer;
+}
+
+vector<string> solution(vector<vector<string>> tickets) {
+    return DFS(tickets);
 }
