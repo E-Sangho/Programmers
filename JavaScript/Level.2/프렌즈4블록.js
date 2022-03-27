@@ -55,10 +55,8 @@ function solution(m, n, board) {
 					++numBlank;
 				}
 			}
-			console.log(temp_arr);
-			console.log(numBlank);
 			let index = 0;
-			for (let i = 0; i < temp_arr.length; ++i) {
+			for (let i = 0; i <= row; ++i) {
 				if (numBlank > 0) {
 					board[i] =
 						board[i].substring(0, column) +
@@ -76,9 +74,7 @@ function solution(m, n, board) {
 	}
 
 	while (eraseBlock() > 0) {
-		console.log(board);
 		updateBlock();
-		console.log(board);
 	}
 
 	for (let i = 0; i < m; ++i) {
