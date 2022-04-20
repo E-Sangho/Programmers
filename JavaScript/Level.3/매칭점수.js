@@ -4,11 +4,9 @@ function solution(word, pages) {
 	let webSite = new Map();
 	const searchWord = new RegExp(`\\b${word.toUpperCase()}\\b`, "gm");
 	const metaRegex = /<meta property="og:url" content="(.*)"\/>/;
-	const bodyRegex = /<body>(.|\n)*?<\/body>/;
 	const anchorRegex = /<a href="(\S*)">/g;
 	pages.forEach((page, i) => {
 		const siteUrl = page.match(metaRegex)[1];
-		const body = page.match(bodyRegex)[0];
 		const findWord = page
 			.toUpperCase()
 			.replace(/[^A-Z]/g, " ")
